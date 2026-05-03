@@ -9,20 +9,21 @@ function calculateRepayment(amountFinanced, annualRate, termMonths, balloon, pay
   const years = termMonths / 12;
   const totalPayments = Math.round(years * paymentsPerYear);
   const periodRate = annualRate / 100 / paymentsPerYear;
-  const principalToAmortise = amountFinanced - balloon;
 
-  if (amountFinanced <= 0 || principalToAmortise < 0 || totalPayments <= 0) {
+  if (amountFinanced <= 0 || totalPayments <= 0 || balloon < 0 || balloon >= amountFinanced) {
     return 0;
   }
 
   if (periodRate === 0) {
-    return principalToAmortise / totalPayments;
+    return (amountFinanced - balloon) / totalPayments;
   }
 
+  const presentValueOfBalloon = balloon / Math.pow(1 + periodRate, totalPayments);
+
   const repayment =
-    principalToAmortise *
-    (periodRate * Math.pow(1 + periodRate, totalPayments)) /
-    (Math.pow(1 + periodRate, totalPayments) - 1);
+    (amountFinanced - presentValueOfBalloon) *
+    periodRate /
+    (1 - Math.pow(1 + periodRate, -totalPayments));
 
   return repayment;
 }
