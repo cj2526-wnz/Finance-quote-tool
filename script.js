@@ -185,7 +185,7 @@ function copySummary() {
   }).catch(() => {
     alert("Copy failed. Please copy the text manually.");
   });
-}function resetQuote() {
+function resetQuote() {
   document.getElementById("vehiclePrice").value = 35000;
   document.getElementById("orc").value = 0;
   document.getElementById("fees").value = 495;
@@ -193,8 +193,8 @@ function copySummary() {
   document.getElementById("tradeIn").value = 0;
   document.getElementById("rate").value = 10.6;
   document.getElementById("useBalloon").value = "yes";
-  document.getElementById("fortyEightBalloonPct").value = 35;
-  document.getElementById("selectedTerm").value = 60;
+  document.getElementById("fortyEightBalloonPct").value = "35";
+  document.getElementById("selectedTerm").value = "60";
 
   document.getElementById("amountFinanced").textContent = "$0.00";
   document.getElementById("balloonModeNote").textContent = "Balloon is auto-set internally.";
