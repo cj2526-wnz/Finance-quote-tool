@@ -1,31 +1,39 @@
 body {
   font-family: Arial, sans-serif;
-  background: #f4f6f8;
+  background: #000000;
   margin: 0;
   padding: 20px;
-  color: #222;
+  color: #111111;
 }
 
 .container {
-  max-width: 900px;
+  max-width: 980px;
   margin: 0 auto;
 }
 
 h1 {
   margin-bottom: 8px;
+  color: #ffffff;
 }
 
 .subtitle {
   margin-top: 0;
-  color: #666;
+  margin-bottom: 20px;
+  color: #d1d5db;
 }
 
 .card {
-  background: white;
+  background: #ffffff;
   padding: 20px;
-  border-radius: 12px;
+  border-radius: 14px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.08);
+}
+
+.card h2,
+.card h3 {
+  margin-top: 0;
+  color: #111111;
 }
 
 label {
@@ -33,6 +41,7 @@ label {
   margin-top: 14px;
   margin-bottom: 6px;
   font-weight: 600;
+  color: #111111;
 }
 
 input,
@@ -40,36 +49,50 @@ select,
 textarea,
 button {
   width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
   box-sizing: border-box;
   font-size: 15px;
 }
 
-button {
-  margin-top: 16px;
-  background: #111827;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  opacity: 0.92;
-}
-
-.results p {
-  margin: 10px 0;
+input,
+select,
+textarea {
+  background: #ffffff;
+  color: #111111;
 }
 
 textarea {
   margin-top: 8px;
   resize: vertical;
+  min-height: 180px;
+}
+
+button {
+  margin-top: 16px;
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button:hover {
+  background: #222222;
+}
+
+.results p {
+  margin: 10px 0;
+  color: #111111;
 }
 
 .note {
-  color: #777;
+  color: #666666;
   font-size: 13px;
   margin-top: 12px;
+}
+
+strong {
+  color: #111111;
 }

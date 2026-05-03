@@ -45,6 +45,11 @@ function calculateQuote() {
     return;
   }
 
+  if (balloon < 0) {
+    alert("Balloon cannot be negative.");
+    return;
+  }
+
   if (balloon >= amountFinanced) {
     alert("Balloon must be lower than the amount financed.");
     return;
@@ -94,7 +99,15 @@ This is an estimate only and is subject to lender approval, final fees, terms an
 
 function copySummary() {
   const text = document.getElementById("quoteSummary").value;
+
+  if (!text) {
+    alert("Please calculate a quote first.");
+    return;
+  }
+
   navigator.clipboard.writeText(text).then(() => {
     alert("Quote summary copied.");
+  }).catch(() => {
+    alert("Copy failed. Please copy the text manually.");
   });
 }
