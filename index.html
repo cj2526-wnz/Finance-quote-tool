@@ -3,113 +3,115 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Finance Quote Tool</title>
+  <title>Jacky's Finance Quote Tool</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Finance Quote Tool</h1>
+  <div class="page-shell">
+    <div class="container">
+      <h1>Jacky's Finance Quote Tool</h1>
 
-    <div class="main-layout">
-      <div class="card input-card">
-        <h2>Inputs</h2>
+      <div class="main-layout">
+        <div class="card input-card">
+          <h2>Inputs</h2>
 
-        <div class="input-grid">
-          <div class="field-group">
-            <label for="vehiclePrice">Vehicle price ($)</label>
-            <input type="number" id="vehiclePrice" value="35000" />
+          <div class="input-grid">
+            <div class="field-group">
+              <label for="vehiclePrice">Vehicle price ($)</label>
+              <input type="number" id="vehiclePrice" value="35000" />
+            </div>
+
+            <div class="field-group">
+              <label for="orc">ORC / on road costs ($)</label>
+              <input type="number" id="orc" value="0" />
+            </div>
+
+            <div class="field-group">
+              <label for="fees">Other fees ($)</label>
+              <input type="number" id="fees" value="495" />
+            </div>
+
+            <div class="field-group">
+              <label for="deposit">Deposit ($)</label>
+              <input type="number" id="deposit" value="5000" />
+            </div>
+
+            <div class="field-group">
+              <label for="tradeIn">Trade-in equity ($)</label>
+              <input type="number" id="tradeIn" value="0" />
+            </div>
+
+            <div class="field-group">
+              <label for="rate">Interest rate (% p.a.)</label>
+              <input type="number" id="rate" value="10.6" step="0.01" />
+            </div>
+
+            <div class="field-group">
+              <label for="useBalloon">Include balloon?</label>
+              <select id="useBalloon">
+                <option value="yes" selected>Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="fortyEightBalloonPct">48-month balloon option</label>
+              <select id="fortyEightBalloonPct">
+                <option value="35" selected>35% (Mercedes)</option>
+                <option value="40">40% (UDC)</option>
+              </select>
+            </div>
+
+            <div class="field-group full-width">
+              <label for="selectedTerm">Copy summary option</label>
+              <select id="selectedTerm">
+                <option value="36">36 months</option>
+                <option value="48">48 months</option>
+                <option value="60" selected>60 months</option>
+              </select>
+            </div>
           </div>
 
-          <div class="field-group">
-            <label for="orc">ORC / on road costs ($)</label>
-            <input type="number" id="orc" value="0" />
-          </div>
-
-          <div class="field-group">
-            <label for="fees">Other fees ($)</label>
-            <input type="number" id="fees" value="495" />
-          </div>
-
-          <div class="field-group">
-            <label for="deposit">Deposit ($)</label>
-            <input type="number" id="deposit" value="5000" />
-          </div>
-
-          <div class="field-group">
-            <label for="tradeIn">Trade-in equity ($)</label>
-            <input type="number" id="tradeIn" value="0" />
-          </div>
-
-          <div class="field-group">
-            <label for="rate">Interest rate (% p.a.)</label>
-            <input type="number" id="rate" value="10.6" step="0.01" />
-          </div>
-
-          <div class="field-group">
-            <label for="useBalloon">Include balloon?</label>
-            <select id="useBalloon">
-              <option value="yes" selected>Yes</option>
-              <option value="no">No</option>
-            </select>
-          </div>
-
-          <div class="field-group">
-            <label for="fortyEightBalloonPct">48-month balloon option</label>
-            <select id="fortyEightBalloonPct">
-              <option value="35" selected>35% (Mercedes)</option>
-              <option value="40">40% (UDC)</option>
-            </select>
-          </div>
-
-          <div class="field-group full-width">
-            <label for="selectedTerm">Copy summary option</label>
-            <select id="selectedTerm">
-              <option value="36">36 months</option>
-              <option value="48">48 months</option>
-              <option value="60" selected>60 months</option>
-            </select>
+          <div class="button-row">
+            <button type="button" onclick="calculateQuote()">Calculate Quote</button>
+            <button type="button" class="secondary-button" onclick="resetQuote()">Reset</button>
           </div>
         </div>
 
-        <div class="button-row">
-          <button type="button" onclick="calculateQuote()">Calculate Quote</button>
-          <button type="button" class="secondary-button" onclick="resetQuote()">Reset</button>
+        <div class="card results-card">
+          <h2>Results</h2>
+
+          <p class="amount-line"><strong>Amount financed:</strong> <span id="amountFinanced">$0.00</span></p>
+
+          <h3>Internal Comparison</h3>
+          <div class="table-wrap">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>Term</th>
+                  <th>Balloon %</th>
+                  <th>Balloon $</th>
+                  <th>Monthly</th>
+                  <th>Fortnightly</th>
+                  <th>Weekly</th>
+                </tr>
+              </thead>
+              <tbody id="comparisonBody">
+                <tr>
+                  <td colspan="6">Click Calculate Quote to show options.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Customer Quote Summary</h3>
+          <textarea id="quoteSummary" rows="9" readonly></textarea>
+          <button type="button" onclick="copySummary()">Copy Summary</button>
+
+          <p class="note">
+            Estimate only. Final lending terms, fees, approvals and disclosure must be confirmed separately.
+          </p>
         </div>
-      </div>
-
-      <div class="card results-card">
-        <h2>Results</h2>
-
-        <p class="amount-line"><strong>Amount financed:</strong> <span id="amountFinanced">$0.00</span></p>
-
-        <h3>Internal Comparison</h3>
-        <div class="table-wrap">
-          <table class="comparison-table">
-            <thead>
-              <tr>
-                <th>Term</th>
-                <th>Balloon %</th>
-                <th>Balloon $</th>
-                <th>Monthly</th>
-                <th>Fortnightly</th>
-                <th>Weekly</th>
-              </tr>
-            </thead>
-            <tbody id="comparisonBody">
-              <tr>
-                <td colspan="6">Click Calculate Quote to show options.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3>Customer Quote Summary</h3>
-        <textarea id="quoteSummary" rows="10" readonly></textarea>
-        <button type="button" onclick="copySummary()">Copy Summary</button>
-
-        <p class="note">
-          Estimate only. Final lending terms, fees, approvals and disclosure must be confirmed separately.
-        </p>
       </div>
     </div>
   </div>
