@@ -20,20 +20,33 @@
         <div class="card input-card">
           <h2>Inputs</h2>
 
+          <div class="mode-toggle">
+            <button type="button" id="quoteModeBtn" class="mode-button active" onclick="setMode('quote')">Quote Mode</button>
+            <button type="button" id="budgetModeBtn" class="mode-button" onclick="setMode('budget')">Budget Mode</button>
+          </div>
+
           <div class="input-grid">
-            <div class="field-group">
+            <div class="field-group quote-only">
               <label for="vehiclePrice">Vehicle price ($)</label>
               <input type="number" id="vehiclePrice" value="35000" />
             </div>
 
-            <div class="field-group">
+            <div class="field-group quote-only">
               <label for="orc">ORC / on road costs ($)</label>
               <input type="number" id="orc" value="0" />
             </div>
 
-            <div class="field-group">
+            <div class="field-group quote-only">
               <label for="fees">Other fees ($)</label>
               <input type="number" id="fees" value="495" />
+            </div>
+
+            <div class="field-group budget-only full-width hidden">
+              <label for="weeklyBudget">Target weekly budget</label>
+              <div class="slider-row">
+                <input type="range" id="weeklyBudget" min="50" max="600" step="5" value="200" oninput="updateWeeklyBudgetDisplay()" />
+                <div class="slider-value" id="weeklyBudgetDisplay">$200/week</div>
+              </div>
             </div>
 
             <div class="field-group">
@@ -68,7 +81,7 @@
             </div>
 
             <div class="field-group full-width">
-              <label for="selectedTerm">Copy summary option</label>
+              <label for="selectedTerm">Selected term</label>
               <select id="selectedTerm">
                 <option value="36">36 months</option>
                 <option value="48">48 months</option>
@@ -78,7 +91,7 @@
           </div>
 
           <div class="button-row">
-            <button type="button" onclick="calculateQuote()">Calculate Quote</button>
+            <button type="button" onclick="calculateQuote()">Calculate</button>
             <button type="button" class="secondary-button" onclick="resetQuote()">Reset</button>
           </div>
         </div>
@@ -86,15 +99,23 @@
         <div class="card results-card">
           <h2>Results</h2>
 
-          <p class="amount-line">
+          <p class="amount-line quote-result">
             <strong>Amount financed:</strong>
             <span id="amountFinanced">$0.00</span>
           </p>
 
-          <h3>Internal Comparison</h3>
+          <div class="budget-result hidden">
+            <div class="budget-highlight">
+              <div class="budget-label">Estimated max vehicle price</div>
+              <div class="budget-value" id="maxVehiclePrice">$0.00</div>
+              <div class="budget-small" id="budgetResultNote">Select Budget Mode and calculate.</div>
+            </div>
+          </div>
+
+          <h3 id="comparisonTitle">Internal Comparison</h3>
           <div class="table-wrap">
             <table class="comparison-table">
-              <thead>
+              <thead id="comparisonHead">
                 <tr>
                   <th>Term</th>
                   <th>Balloon %</th>
@@ -106,19 +127,29 @@
               </thead>
               <tbody id="comparisonBody">
                 <tr>
-                  <td colspan="6">Click Calculate Quote to show options.</td>
+                  <td colspan="6">Click Calculate to show options.</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <h3>Customer Quote Summary</h3>
-          <textarea id="quoteSummary" rows="9" readonly></textarea>
-<button type="button" onclick="copySummary()">Copy Summary</button>
+          <div id="customerSummarySection">
+            <h3>Customer Quote Summary</h3>
+            <textarea id="quoteSummary" rows="9" readonly></textarea>
+            <button type="button" onclick="copySummary()">Copy Summary</button>
 
-          <p class="note">
-            Estimate only. Final lending terms, fees, approvals and disclosure must be confirmed separately.
-          </p>
+            <p class="note">
+              Estimate only. Final lending terms, fees, approvals and disclosure must be confirmed separately.
+            </p>
+          </div>
+
+          <div id="budgetGuideSection" class="hidden">
+            <h3>Budget Mode Guide</h3>
+            <p class="budget-guide">
+              Use this mode as a quick guide to estimate what vehicle price range may fit the customer's weekly budget.
+              This is for internal guidance only and is still subject to lender approval, final fees, terms and disclosure.
+            </p>
+          </div>
         </div>
       </div>
     </div>
