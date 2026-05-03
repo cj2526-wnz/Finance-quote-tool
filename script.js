@@ -5,6 +5,15 @@ function formatMoney(value) {
   }).format(value);
 }
 
+function escapeHtml(text) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function getBalloonPercentage(termMonths, useBalloon, fortyEightBalloonPct) {
   if (!useBalloon) {
     return 0;
@@ -79,12 +88,16 @@ function buildOption(amountFinanced, vehiclePrice, annualRate, termMonths, useBa
   };
 }
 
-function renderComparisonTable(options) {
+function renderComparisonTable(options, selectedTerm) {
   const comparisonBody = document.getElementById("comparisonBody");
   comparisonBody.innerHTML = "";
 
   options.forEach((option) => {
     const row = document.createElement("tr");
+
+    if (option.termMonths === selectedTerm) {
+      row.classList.add("selected-row");
+    }
 
     if (!option.valid) {
       row.innerHTML = `
@@ -106,6 +119,33 @@ function renderComparisonTable(options) {
 
     comparisonBody.appendChild(row);
   });
+}
+
+function buildCustomerSummary(vehiclePrice, deposit, tradeIn, amountFinanced, rate, selectedOption, useBalloon) {
+  const lines = [
+    "Finance Quote Estimate",
+    "",
+    `Vehicle price: ${formatMoney(vehiclePrice)}`,
+    `Deposit: ${formatMoney(deposit)}`,
+    `Trade-in equity: ${formatMoney(tradeIn)}`,
+    `Amount financed: ${formatMoney(amountFinanced)}`,
+    `Rate: ${rate.toFixed(2)}% p.a.`,
+    "",
+    `Based on this structure, your estimated weekly repayment would be ${formatMoney(selectedOption.weeklyRepayment)} over ${selectedOption.termMonths} months.`
+  ];
+
+  if (useBalloon && selectedOption.balloonAmount > 0) {
+    lines.push(
+      `This option includes a balloon payment of ${formatMoney(selectedOption.balloonAmount)} (${(selectedOption.balloonPct * 100).toFixed(0)}%) at the end of the term.`
+    );
+  }
+
+  lines.push(
+    "",
+    "This is an estimate only and is subject to lender approval, final fees, terms and disclosure."
+  );
+
+  return lines.join("\n");
 }
 
 function calculateQuote() {
@@ -137,7 +177,7 @@ function calculateQuote() {
   );
 
   document.getElementById("amountFinanced").textContent = formatMoney(amountFinanced);
-  renderComparisonTable(options);
+  renderComparisonTable(options, selectedTerm);
 
   const selectedOption = options.find((option) => option.termMonths === selectedTerm);
 
@@ -147,22 +187,15 @@ function calculateQuote() {
     return;
   }
 
-  let summary = `
-Vehicle price: ${formatMoney(vehiclePrice)}
-Deposit: ${formatMoney(deposit)}
-Trade-in equity: ${formatMoney(tradeIn)}
-Amount financed: ${formatMoney(amountFinanced)}
-
-Rate: ${rate.toFixed(2)}% p.a.
-Term: ${selectedOption.termMonths} months
-`.trim();
-
-  if (useBalloon && selectedOption.balloonAmount > 0) {
-    summary += `\nBalloon: ${formatMoney(selectedOption.balloonAmount)} (${(selectedOption.balloonPct * 100).toFixed(0)}%)`;
-  }
-
-  summary += `\nEstimated weekly repayment: ${formatMoney(selectedOption.weeklyRepayment)}`;
-  summary += `\n\nThis is an estimate only and is subject to lender approval, final fees, terms and disclosure.`;
+  const summary = buildCustomerSummary(
+    vehiclePrice,
+    deposit,
+    tradeIn,
+    amountFinanced,
+    rate,
+    selectedOption,
+    useBalloon
+  );
 
   document.getElementById("quoteSummary").value = summary;
 }
@@ -180,6 +213,118 @@ function copySummary() {
   }).catch(() => {
     alert("Copy failed. Please copy the text manually.");
   });
+}
+
+function printQuote() {
+  const summary = document.getElementById("quoteSummary").value;
+  const amountFinanced = document.getElementById("amountFinanced").textContent;
+  const tableHtml = document.querySelector(".comparison-table").outerHTML;
+
+  if (!summary) {
+    alert("Please calculate a quote first.");
+    return;
+  }
+
+  const printWindow = window.open("", "_blank", "width=1100,height=850");
+
+  if (!printWindow) {
+    alert("Pop-up blocked. Please allow pop-ups and try again.");
+    return;
+  }
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <title>Jacky's Finance Tool - Quote</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 32px;
+          color: #111827;
+        }
+
+        h1 {
+          margin: 0 0 16px 0;
+          font-size: 30px;
+        }
+
+        h2 {
+          margin: 24px 0 10px 0;
+          font-size: 20px;
+        }
+
+        .amount-line {
+          font-size: 18px;
+          margin-bottom: 16px;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 13px;
+          margin-top: 10px;
+        }
+
+        th, td {
+          border: 1px solid #d1d5db;
+          padding: 9px 10px;
+          text-align: left;
+          white-space: nowrap;
+        }
+
+        th {
+          background: #111827;
+          color: #ffffff;
+        }
+
+        tr.selected-row td {
+          background: #eaf3ff !important;
+          font-weight: 700;
+        }
+
+        pre {
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          border: 1px solid #d1d5db;
+          border-radius: 10px;
+          padding: 14px;
+          background: #f8fafc;
+          font-size: 14px;
+          line-height: 1.45;
+        }
+
+        .footer {
+          margin-top: 18px;
+          color: #6b7280;
+          font-size: 12px;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Jacky's Finance Tool</h1>
+      <div class="amount-line"><strong>Amount financed:</strong> ${escapeHtml(amountFinanced)}</div>
+
+      <h2>Internal Comparison</h2>
+      ${tableHtml}
+
+      <h2>Customer Quote Summary</h2>
+      <pre>${escapeHtml(summary)}</pre>
+
+      <div class="footer">
+        Generated from Jacky's Finance Tool
+      </div>
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.focus();
+
+  setTimeout(() => {
+    printWindow.print();
+  }, 300);
 }
 
 function resetQuote() {

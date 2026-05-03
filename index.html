@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -86,7 +86,10 @@
         <div class="card results-card">
           <h2>Results</h2>
 
-          <p class="amount-line"><strong>Amount financed:</strong> <span id="amountFinanced">$0.00</span></p>
+          <p class="amount-line">
+            <strong>Amount financed:</strong>
+            <span id="amountFinanced">$0.00</span>
+          </p>
 
           <h3>Internal Comparison</h3>
           <div class="table-wrap">
@@ -111,7 +114,11 @@
 
           <h3>Customer Quote Summary</h3>
           <textarea id="quoteSummary" rows="9" readonly></textarea>
-          <button type="button" onclick="copySummary()">Copy Summary</button>
+
+          <div class="results-button-row">
+            <button type="button" onclick="copySummary()">Copy Summary</button>
+            <button type="button" class="secondary-button" onclick="printQuote()">Print / Save PDF</button>
+          </div>
 
           <p class="note">
             Estimate only. Final lending terms, fees, approvals and disclosure must be confirmed separately.
