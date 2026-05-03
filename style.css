@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-  max-width: 980px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -93,6 +93,41 @@ button:hover {
   margin-top: 12px;
 }
 
+.internal-note {
+  color: #444444;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
 strong {
+  color: #111111;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.comparison-table th,
+.comparison-table td {
+  border: 1px solid #d1d5db;
+  padding: 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.comparison-table th {
+  background: #111111;
+  color: #ffffff;
+}
+
+.comparison-table td {
+  background: #ffffff;
   color: #111111;
 }

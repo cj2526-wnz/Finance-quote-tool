@@ -5,6 +5,16 @@ function formatMoney(value) {
   }).format(value);
 }
 
+function getBalloonPercentage(termMonths) {
+  const balloonMap = {
+    36: 0.45,
+    48: 0.35,
+    60: 0.25
+  };
+
+  return balloonMap[termMonths] || 0;
+}
+
 function calculateRepayment(amountFinanced, annualRate, termMonths, balloon, paymentsPerYear) {
   const years = termMonths / 12;
   const totalPayments = Math.round(years * paymentsPerYear);
@@ -28,6 +38,34 @@ function calculateRepayment(amountFinanced, annualRate, termMonths, balloon, pay
   return repayment;
 }
 
+function buildOption(amountFinanced, vehiclePrice, annualRate, termMonths) {
+  const balloonPct = getBalloonPercentage(termMonths);
+  const balloonAmount = vehiclePrice * balloonPct;
+
+  if (balloonAmount >= amountFinanced) {
+    return {
+      termMonths,
+      balloonPct,
+      balloonAmount,
+      valid: false
+    };
+  }
+
+  const monthlyRepayment = calculateRepayment(amountFinanced, annualRate, termMonths, balloonAmount, 12);
+  const fortnightlyRepayment = calculateRepayment(amountFinanced, annualRate, termMonths, balloonAmount, 26);
+  const weeklyRepayment = calculateRepayment(amountFinanced, annualRate, termMonths, balloonAmount, 52);
+
+  return {
+    termMonths,
+    balloonPct,
+    balloonAmount,
+    monthlyRepayment,
+    fortnightlyRepayment,
+    weeklyRepayment,
+    valid: true
+  };
+}
+
 function calculateQuote() {
   const vehiclePrice = parseFloat(document.getElementById("vehiclePrice").value) || 0;
   const orc = parseFloat(document.getElementById("orc").value) || 0;
@@ -35,61 +73,71 @@ function calculateQuote() {
   const deposit = parseFloat(document.getElementById("deposit").value) || 0;
   const tradeIn = parseFloat(document.getElementById("tradeIn").value) || 0;
   const rate = parseFloat(document.getElementById("rate").value) || 0;
-  const termMonths = parseInt(document.getElementById("termMonths").value) || 0;
-  const balloon = parseFloat(document.getElementById("balloon").value) || 0;
+  const selectedTerm = parseInt(document.getElementById("selectedTerm").value) || 60;
 
   const amountFinanced = vehiclePrice + orc + fees - deposit - tradeIn;
+
+  if (vehiclePrice <= 0) {
+    alert("Vehicle price must be more than $0.");
+    return;
+  }
 
   if (amountFinanced <= 0) {
     alert("Amount financed must be more than $0.");
     return;
   }
 
-  if (balloon < 0) {
-    alert("Balloon cannot be negative.");
-    return;
-  }
-
-  if (balloon >= amountFinanced) {
-    alert("Balloon must be lower than the amount financed.");
-    return;
-  }
-
-  const monthlyRepayment = calculateRepayment(amountFinanced, rate, termMonths, balloon, 12);
-  const fortnightlyRepayment = calculateRepayment(amountFinanced, rate, termMonths, balloon, 26);
-  const weeklyRepayment = calculateRepayment(amountFinanced, rate, termMonths, balloon, 52);
-
-  const totalMonthlyPaid = monthlyRepayment * termMonths;
-  const totalPaid = totalMonthlyPaid + balloon;
-  const totalInterest = totalPaid - amountFinanced;
+  const terms = [36, 48, 60];
+  const options = terms.map(term => buildOption(amountFinanced, vehiclePrice, rate, term));
 
   document.getElementById("amountFinanced").textContent = formatMoney(amountFinanced);
-  document.getElementById("monthlyRepayment").textContent = formatMoney(monthlyRepayment);
-  document.getElementById("fortnightlyRepayment").textContent = formatMoney(fortnightlyRepayment);
-  document.getElementById("weeklyRepayment").textContent = formatMoney(weeklyRepayment);
-  document.getElementById("totalInterest").textContent = formatMoney(totalInterest);
-  document.getElementById("totalPaid").textContent = formatMoney(totalPaid);
+
+  const comparisonBody = document.getElementById("comparisonBody");
+  comparisonBody.innerHTML = "";
+
+  options.forEach(option => {
+    const row = document.createElement("tr");
+
+    if (!option.valid) {
+      row.innerHTML = `
+        <td>${option.termMonths} months</td>
+        <td>${(option.balloonPct * 100).toFixed(0)}%</td>
+        <td>${formatMoney(option.balloonAmount)}</td>
+        <td colspan="3">Not available with current structure</td>
+      `;
+    } else {
+      row.innerHTML = `
+        <td>${option.termMonths} months</td>
+        <td>${(option.balloonPct * 100).toFixed(0)}%</td>
+        <td>${formatMoney(option.balloonAmount)}</td>
+        <td>${formatMoney(option.monthlyRepayment)}</td>
+        <td>${formatMoney(option.fortnightlyRepayment)}</td>
+        <td>${formatMoney(option.weeklyRepayment)}</td>
+      `;
+    }
+
+    comparisonBody.appendChild(row);
+  });
+
+  const selectedOption = options.find(option => option.termMonths === selectedTerm);
+
+  if (!selectedOption || !selectedOption.valid) {
+    document.getElementById("quoteSummary").value =
+      "Selected option is not available with the current structure.";
+    return;
+  }
 
   const summary = `
 Finance Quote Estimate
 
 Vehicle price: ${formatMoney(vehiclePrice)}
-ORC: ${formatMoney(orc)}
-Other fees: ${formatMoney(fees)}
 Deposit: ${formatMoney(deposit)}
 Trade-in equity: ${formatMoney(tradeIn)}
 Amount financed: ${formatMoney(amountFinanced)}
 
 Rate: ${rate.toFixed(2)}% p.a.
-Term: ${termMonths} months
-Balloon: ${formatMoney(balloon)}
-
-Estimated monthly repayment: ${formatMoney(monthlyRepayment)}
-Estimated fortnightly repayment: ${formatMoney(fortnightlyRepayment)}
-Estimated weekly repayment: ${formatMoney(weeklyRepayment)}
-
-Estimated total interest: ${formatMoney(totalInterest)}
-Estimated total paid incl. balloon: ${formatMoney(totalPaid)}
+Term: ${selectedOption.termMonths} months
+Estimated weekly repayment: ${formatMoney(selectedOption.weeklyRepayment)}
 
 This is an estimate only and is subject to lender approval, final fees, terms and disclosure.
   `.trim();
