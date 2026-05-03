@@ -48,6 +48,34 @@ function calculateRepayment(amountFinanced, annualRate, termMonths, balloon, pay
   return repayment;
 }
 
+function buildOption(amountFinanced, vehiclePrice, annualRate, termMonths, useBalloon, fortyEightBalloonPct) {
+  const balloonPct = getBalloonPercentage(termMonths, useBalloon, fortyEightBalloonPct);
+  const balloonAmount = vehiclePrice * balloonPct;
+
+  if (balloonAmount >= amountFinanced) {
+    return {
+      termMonths,
+      balloonPct,
+      balloonAmount,
+      valid: false
+    };
+  }
+
+  const monthlyRepayment = calculateRepayment(amountFinanced, annualRate, termMonths, balloonAmount, 12);
+  const fortnightlyRepayment = calculateRepayment(amountFinanced, annualRate, termMonths, balloonAmount, 26);
+  const weeklyRepayment = calculateRepayment(amountFinanced, annualRate, termMonths, balloonAmount, 52);
+
+  return {
+    termMonths,
+    balloonPct,
+    balloonAmount,
+    monthlyRepayment,
+    fortnightlyRepayment,
+    weeklyRepayment,
+    valid: true
+  };
+}
+
 function calculateQuote() {
   const vehiclePrice = parseFloat(document.getElementById("vehiclePrice").value) || 0;
   const orc = parseFloat(document.getElementById("orc").value) || 0;
@@ -71,17 +99,47 @@ function calculateQuote() {
     return;
   }
 
-  const balloonPct = getBalloonPercentage(selectedTerm, useBalloon, fortyEightBalloonPct);
-  const balloonAmount = vehiclePrice * balloonPct;
-
-  if (balloonAmount >= amountFinanced) {
-    alert("Balloon must be lower than the amount financed.");
-    return;
-  }
-
-  const weeklyRepayment = calculateRepayment(amountFinanced, rate, selectedTerm, balloonAmount, 52);
+  const terms = [36, 48, 60];
+  const options = terms.map(term =>
+    buildOption(amountFinanced, vehiclePrice, rate, term, useBalloon, fortyEightBalloonPct)
+  );
 
   document.getElementById("amountFinanced").textContent = formatMoney(amountFinanced);
+
+  const comparisonBody = document.getElementById("comparisonBody");
+  comparisonBody.innerHTML = "";
+
+  options.forEach(option => {
+    const row = document.createElement("tr");
+
+    if (!option.valid) {
+      row.innerHTML = `
+        <td>${option.termMonths} months</td>
+        <td>${(option.balloonPct * 100).toFixed(0)}%</td>
+        <td>${formatMoney(option.balloonAmount)}</td>
+        <td colspan="3">Not available</td>
+      `;
+    } else {
+      row.innerHTML = `
+        <td>${option.termMonths} months</td>
+        <td>${(option.balloonPct * 100).toFixed(0)}%</td>
+        <td>${formatMoney(option.balloonAmount)}</td>
+        <td>${formatMoney(option.monthlyRepayment)}</td>
+        <td>${formatMoney(option.fortnightlyRepayment)}</td>
+        <td>${formatMoney(option.weeklyRepayment)}</td>
+      `;
+    }
+
+    comparisonBody.appendChild(row);
+  });
+
+  const selectedOption = options.find(option => option.termMonths === selectedTerm);
+
+  if (!selectedOption || !selectedOption.valid) {
+    document.getElementById("quoteSummary").value =
+      "Selected option is not available with the current structure.";
+    return;
+  }
 
   let summary = `
 Vehicle price: ${formatMoney(vehiclePrice)}
@@ -90,14 +148,14 @@ Trade-in equity: ${formatMoney(tradeIn)}
 Amount financed: ${formatMoney(amountFinanced)}
 
 Rate: ${rate.toFixed(2)}% p.a.
-Term: ${selectedTerm} months
+Term: ${selectedOption.termMonths} months
 `.trim();
 
-  if (useBalloon && balloonAmount > 0) {
-    summary += `\nBalloon: ${formatMoney(balloonAmount)} (${(balloonPct * 100).toFixed(0)}%)`;
+  if (useBalloon && selectedOption.balloonAmount > 0) {
+    summary += `\nBalloon: ${formatMoney(selectedOption.balloonAmount)} (${(selectedOption.balloonPct * 100).toFixed(0)}%)`;
   }
 
-  summary += `\nEstimated weekly repayment: ${formatMoney(weeklyRepayment)}`;
+  summary += `\nEstimated weekly repayment: ${formatMoney(selectedOption.weeklyRepayment)}`;
   summary += `\n\nThis is an estimate only and is subject to lender approval, final fees, terms and disclosure.`;
 
   document.getElementById("quoteSummary").value = summary;
@@ -130,5 +188,10 @@ function resetQuote() {
   document.getElementById("selectedTerm").value = "60";
 
   document.getElementById("amountFinanced").textContent = "$0.00";
+  document.getElementById("comparisonBody").innerHTML = `
+    <tr>
+      <td colspan="6">Click Calculate Quote to show options.</td>
+    </tr>
+  `;
   document.getElementById("quoteSummary").value = "";
 }
