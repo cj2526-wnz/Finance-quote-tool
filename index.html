@@ -18,10 +18,10 @@
       <input type="number" id="vehiclePrice" value="35000" />
 
       <label>ORC / on road costs ($)</label>
-      <input type="number" id="orc" value="1350" />
+      <input type="number" id="orc" value="0" />
 
       <label>Other fees ($)</label>
-      <input type="number" id="fees" value="635.35" />
+      <input type="number" id="fees" value="595" />
 
       <label>Deposit ($)</label>
       <input type="number" id="deposit" value="5000" />
@@ -52,6 +52,7 @@
       </select>
 
       <button onclick="calculateQuote()">Calculate Quote</button>
+      <button onclick="resetQuote()">Reset</button>
     </div>
 
     <div class="card results">
