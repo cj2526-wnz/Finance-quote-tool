@@ -5,14 +5,24 @@ function formatMoney(value) {
   }).format(value);
 }
 
-function getBalloonPercentage(termMonths) {
-  const balloonMap = {
-    36: 0.45,
-    48: 0.35,
-    60: 0.25
-  };
+function getBalloonPercentage(termMonths, useBalloon, fortyEightBalloonPct) {
+  if (!useBalloon) {
+    return 0;
+  }
 
-  return balloonMap[termMonths] || 0;
+  if (termMonths === 36) {
+    return 0.45;
+  }
+
+  if (termMonths === 48) {
+    return fortyEightBalloonPct / 100;
+  }
+
+  if (termMonths === 60) {
+    return 0.25;
+  }
+
+  return 0;
 }
 
 function calculateRepayment(amountFinanced, annualRate, termMonths, balloon, paymentsPerYear) {
@@ -38,8 +48,8 @@ function calculateRepayment(amountFinanced, annualRate, termMonths, balloon, pay
   return repayment;
 }
 
-function buildOption(amountFinanced, vehiclePrice, annualRate, termMonths) {
-  const balloonPct = getBalloonPercentage(termMonths);
+function buildOption(amountFinanced, vehiclePrice, annualRate, termMonths, useBalloon, fortyEightBalloonPct) {
+  const balloonPct = getBalloonPercentage(termMonths, useBalloon, fortyEightBalloonPct);
   const balloonAmount = vehiclePrice * balloonPct;
 
   if (balloonAmount >= amountFinanced) {
@@ -74,6 +84,8 @@ function calculateQuote() {
   const tradeIn = parseFloat(document.getElementById("tradeIn").value) || 0;
   const rate = parseFloat(document.getElementById("rate").value) || 0;
   const selectedTerm = parseInt(document.getElementById("selectedTerm").value) || 60;
+  const useBalloon = document.getElementById("useBalloon").value === "yes";
+  const fortyEightBalloonPct = parseFloat(document.getElementById("fortyEightBalloonPct").value) || 35;
 
   const amountFinanced = vehiclePrice + orc + fees - deposit - tradeIn;
 
@@ -88,9 +100,20 @@ function calculateQuote() {
   }
 
   const terms = [36, 48, 60];
-  const options = terms.map(term => buildOption(amountFinanced, vehiclePrice, rate, term));
+  const options = terms.map(term =>
+    buildOption(amountFinanced, vehiclePrice, rate, term, useBalloon, fortyEightBalloonPct)
+  );
 
   document.getElementById("amountFinanced").textContent = formatMoney(amountFinanced);
+
+  const balloonModeNote = document.getElementById("balloonModeNote");
+  if (useBalloon) {
+    balloonModeNote.textContent =
+      `Balloon is on: 36 months = 45%, 48 months = ${fortyEightBalloonPct}%, 60 months = 25%`;
+  } else {
+    balloonModeNote.textContent =
+      "Balloon is off: all options shown with no balloon.";
+  }
 
   const comparisonBody = document.getElementById("comparisonBody");
   comparisonBody.innerHTML = "";
@@ -127,7 +150,7 @@ function calculateQuote() {
     return;
   }
 
-  const summary = `
+  let summary = `
 Finance Quote Estimate
 
 Vehicle price: ${formatMoney(vehiclePrice)}
@@ -137,10 +160,14 @@ Amount financed: ${formatMoney(amountFinanced)}
 
 Rate: ${rate.toFixed(2)}% p.a.
 Term: ${selectedOption.termMonths} months
-Estimated weekly repayment: ${formatMoney(selectedOption.weeklyRepayment)}
+`.trim();
 
-This is an estimate only and is subject to lender approval, final fees, terms and disclosure.
-  `.trim();
+  if (useBalloon && selectedOption.balloonAmount > 0) {
+    summary += `\nBalloon: ${formatMoney(selectedOption.balloonAmount)} (${(selectedOption.balloonPct * 100).toFixed(0)}%)`;
+  }
+
+  summary += `\nEstimated weekly repayment: ${formatMoney(selectedOption.weeklyRepayment)}`;
+  summary += `\n\nThis is an estimate only and is subject to lender approval, final fees, terms and disclosure.`;
 
   document.getElementById("quoteSummary").value = summary;
 }

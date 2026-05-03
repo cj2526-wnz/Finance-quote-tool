@@ -32,6 +32,18 @@
       <label>Interest rate (% p.a.)</label>
       <input type="number" id="rate" value="9.99" step="0.01" />
 
+      <label>Include balloon?</label>
+      <select id="useBalloon">
+        <option value="yes" selected>Yes</option>
+        <option value="no">No</option>
+      </select>
+
+      <label>48-month balloon option</label>
+      <select id="fortyEightBalloonPct">
+        <option value="35" selected>35% (Mercedes)</option>
+        <option value="40">40% (UDC)</option>
+      </select>
+
       <label>Copy summary option</label>
       <select id="selectedTerm">
         <option value="36">36 months</option>
@@ -48,8 +60,8 @@
       <p><strong>Amount financed:</strong> <span id="amountFinanced">$0.00</span></p>
 
       <h3>Internal Comparison</h3>
-      <p class="internal-note">
-        Balloon is auto-set internally: 36 months = 45%, 48 months = 35%, 60 months = 25%
+      <p class="internal-note" id="balloonModeNote">
+        Balloon is auto-set internally.
       </p>
 
       <div class="table-wrap">
