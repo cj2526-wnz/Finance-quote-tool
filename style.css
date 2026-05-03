@@ -3,9 +3,9 @@ body {
   margin: 0;
   color: #e5e7eb;
   background:
-    radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.18), transparent 28%),
-    linear-gradient(135deg, #06090f 0%, #0b1220 45%, #111827 100%);
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(148, 163, 184, 0.08), transparent 26%),
+    linear-gradient(135deg, #060708 0%, #0f1115 38%, #181c22 100%);
 }
 
 .page-shell {
@@ -20,45 +20,47 @@ body {
 
 h1 {
   margin: 0 0 24px 0;
-  color: #f8fafc;
-  font-family: "Poppins", "Inter", sans-serif;
-  font-size: 42px;
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  color: #f5f5f5;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 50px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 20px rgba(255, 255, 255, 0.08);
 }
 
 .main-layout {
   display: grid;
-  grid-template-columns: 460px 860px;
+  grid-template-columns: 460px 840px;
   gap: 22px;
   justify-content: center;
   align-items: start;
 }
 
 .card {
-  border-radius: 20px;
+  border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.32);
 }
 
 .input-card {
-  background: linear-gradient(180deg, rgba(24, 28, 37, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%);
-  border: 1px solid rgba(148, 163, 184, 0.16);
+  background:
+    linear-gradient(180deg, rgba(26, 28, 34, 0.98) 0%, rgba(16, 18, 23, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   padding: 22px;
 }
 
 .results-card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
-  border: 1px solid rgba(203, 213, 225, 0.5);
+  background:
+    linear-gradient(180deg, rgba(250, 250, 251, 0.98) 0%, rgba(241, 245, 249, 0.98) 100%);
+  border: 1px solid rgba(203, 213, 225, 0.45);
   padding: 22px;
-  max-width: 860px;
+  max-width: 840px;
 }
 
 .card h2 {
   margin-top: 0;
   margin-bottom: 18px;
-  font-family: "Poppins", "Inter", sans-serif;
   font-size: 28px;
   font-weight: 700;
 }
@@ -68,23 +70,22 @@ h1 {
 }
 
 .results-card h2 {
-  color: #0f172a;
+  color: #111827;
 }
 
 .card h3 {
   margin-top: 20px;
   margin-bottom: 10px;
-  font-family: "Poppins", "Inter", sans-serif;
   font-size: 20px;
   font-weight: 700;
 }
 
 .input-card h3 {
-  color: #f8fafc;
+  color: #ffffff;
 }
 
 .results-card h3 {
-  color: #0f172a;
+  color: #111827;
 }
 
 .input-grid {
@@ -106,16 +107,16 @@ label {
   display: block;
   margin-bottom: 6px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.01em;
 }
 
 .input-card label {
-  color: #dbe4f0;
+  color: #d1d5db;
 }
 
 .results-card label {
-  color: #1e293b;
+  color: #1f2937;
 }
 
 input,
@@ -124,7 +125,7 @@ textarea,
 button {
   width: 100%;
   padding: 12px 14px;
-  border-radius: 13px;
+  border-radius: 14px;
   box-sizing: border-box;
   font-size: 15px;
   font-family: inherit;
@@ -132,35 +133,36 @@ button {
 
 .input-card input,
 .input-card select {
-  background: linear-gradient(180deg, #202838 0%, #161d2b 100%);
+  background: linear-gradient(180deg, #23272f 0%, #1b1f26 100%);
   color: #f8fafc;
-  border: 1px solid #374151;
+  border: 1px solid #3b414c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
 .input-card input:focus,
 .input-card select:focus {
   outline: none;
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18);
-  background: linear-gradient(180deg, #253148 0%, #1b2333 100%);
+  border-color: #9ca3af;
+  box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.16);
+  background: linear-gradient(180deg, #2a2f39 0%, #20242c 100%);
 }
 
 .results-card textarea {
   background: #ffffff;
-  color: #0f172a;
+  color: #111827;
   border: 1px solid #cbd5e1;
   margin-top: 8px;
   resize: vertical;
   min-height: 185px;
   font-size: 13px;
-  line-height: 1.4;
+  line-height: 1.42;
 }
 
 .results-card textarea:focus {
   outline: none;
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.16);
+  border-color: #9ca3af;
+  box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.14);
 }
 
 .button-row {
@@ -183,9 +185,9 @@ button {
 
 .input-card button,
 .results-card button {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  color: #ffffff;
-  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+  background: linear-gradient(135deg, #d5d9df 0%, #9ea6b2 100%);
+  color: #111827;
+  box-shadow: 0 10px 22px rgba(148, 163, 184, 0.22);
 }
 
 .input-card button:hover,
@@ -195,24 +197,24 @@ button {
 }
 
 .secondary-button {
-  background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
-  color: #ffffff;
-  box-shadow: 0 10px 20px rgba(51, 65, 85, 0.24) !important;
+  background: linear-gradient(135deg, #b7bec8 0%, #8a94a3 100%) !important;
+  color: #111827;
+  box-shadow: 0 10px 22px rgba(100, 116, 139, 0.22) !important;
 }
 
 .amount-line {
   margin-top: 0;
   margin-bottom: 14px;
   font-size: 18px;
-  color: #0f172a;
+  color: #111827;
 }
 
 .results-card p {
-  color: #0f172a;
+  color: #111827;
 }
 
 .note {
-  color: #64748b;
+  color: #6b7280;
   font-size: 12px;
   margin-top: 12px;
 }
@@ -224,7 +226,7 @@ strong {
 .table-wrap {
   overflow-x: auto;
   border-radius: 14px;
-  border: 1px solid #dbe2ea;
+  border: 1px solid #d8dee6;
   background: #ffffff;
 }
 
@@ -243,14 +245,14 @@ strong {
 }
 
 .comparison-table th {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #262c36 0%, #161b22 100%);
+  color: #f8fafc;
   font-weight: 700;
 }
 
 .comparison-table td {
   background: #ffffff;
-  color: #0f172a;
+  color: #111827;
 }
 
 .comparison-table tbody tr:nth-child(even) td {
@@ -258,7 +260,7 @@ strong {
 }
 
 .comparison-table tbody tr:hover td {
-  background: #eaf3ff;
+  background: #eef2f7;
 }
 
 @media (max-width: 1380px) {
@@ -291,6 +293,6 @@ strong {
   }
 
   h1 {
-    font-size: 32px;
+    font-size: 36px;
   }
 }
