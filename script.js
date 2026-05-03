@@ -57,6 +57,9 @@ function buildOption(amountFinanced, vehiclePrice, annualRate, termMonths, useBa
       termMonths,
       balloonPct,
       balloonAmount,
+      monthlyRepayment: 0,
+      fortnightlyRepayment: 0,
+      weeklyRepayment: 0,
       valid: false
     };
   }
@@ -76,40 +79,11 @@ function buildOption(amountFinanced, vehiclePrice, annualRate, termMonths, useBa
   };
 }
 
-function calculateQuote() {
-  const vehiclePrice = parseFloat(document.getElementById("vehiclePrice").value) || 0;
-  const orc = parseFloat(document.getElementById("orc").value) || 0;
-  const fees = parseFloat(document.getElementById("fees").value) || 0;
-  const deposit = parseFloat(document.getElementById("deposit").value) || 0;
-  const tradeIn = parseFloat(document.getElementById("tradeIn").value) || 0;
-  const rate = parseFloat(document.getElementById("rate").value) || 0;
-  const selectedTerm = parseInt(document.getElementById("selectedTerm").value) || 60;
-  const useBalloon = document.getElementById("useBalloon").value === "yes";
-  const fortyEightBalloonPct = parseFloat(document.getElementById("fortyEightBalloonPct").value) || 35;
-
-  const amountFinanced = vehiclePrice + orc + fees - deposit - tradeIn;
-
-  if (vehiclePrice <= 0) {
-    alert("Vehicle price must be more than $0.");
-    return;
-  }
-
-  if (amountFinanced <= 0) {
-    alert("Amount financed must be more than $0.");
-    return;
-  }
-
-  const terms = [36, 48, 60];
-  const options = terms.map(term =>
-    buildOption(amountFinanced, vehiclePrice, rate, term, useBalloon, fortyEightBalloonPct)
-  );
-
-  document.getElementById("amountFinanced").textContent = formatMoney(amountFinanced);
-
+function renderComparisonTable(options) {
   const comparisonBody = document.getElementById("comparisonBody");
   comparisonBody.innerHTML = "";
 
-  options.forEach(option => {
+  options.forEach((option) => {
     const row = document.createElement("tr");
 
     if (!option.valid) {
@@ -132,8 +106,40 @@ function calculateQuote() {
 
     comparisonBody.appendChild(row);
   });
+}
 
-  const selectedOption = options.find(option => option.termMonths === selectedTerm);
+function calculateQuote() {
+  const vehiclePrice = parseFloat(document.getElementById("vehiclePrice").value) || 0;
+  const orc = parseFloat(document.getElementById("orc").value) || 0;
+  const fees = parseFloat(document.getElementById("fees").value) || 0;
+  const deposit = parseFloat(document.getElementById("deposit").value) || 0;
+  const tradeIn = parseFloat(document.getElementById("tradeIn").value) || 0;
+  const rate = parseFloat(document.getElementById("rate").value) || 0;
+  const selectedTerm = parseInt(document.getElementById("selectedTerm").value, 10) || 60;
+  const useBalloon = document.getElementById("useBalloon").value === "yes";
+  const fortyEightBalloonPct = parseFloat(document.getElementById("fortyEightBalloonPct").value) || 35;
+
+  const amountFinanced = vehiclePrice + orc + fees - deposit - tradeIn;
+
+  if (vehiclePrice <= 0) {
+    alert("Vehicle price must be more than $0.");
+    return;
+  }
+
+  if (amountFinanced <= 0) {
+    alert("Amount financed must be more than $0.");
+    return;
+  }
+
+  const terms = [36, 48, 60];
+  const options = terms.map((term) =>
+    buildOption(amountFinanced, vehiclePrice, rate, term, useBalloon, fortyEightBalloonPct)
+  );
+
+  document.getElementById("amountFinanced").textContent = formatMoney(amountFinanced);
+  renderComparisonTable(options);
+
+  const selectedOption = options.find((option) => option.termMonths === selectedTerm);
 
   if (!selectedOption || !selectedOption.valid) {
     document.getElementById("quoteSummary").value =
